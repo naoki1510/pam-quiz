@@ -1,0 +1,35 @@
+services:
+  db:
+    image: mysql:8.1
+    environment:
+      - MYSQL_ROOT_PASSWORD
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - "3306:3306"
+  server:
+    build: ./server
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - ./server:/rails
+    ports:
+      - "3002:3000"
+    depends_on:
+      - db
+    environment:
+      - SECRET_KEY_BASE
+      - RAILS_ENV
+      - MYSQL_ROOT_PASSWORD
+  client:
+    image: node:21
+    working_dir: /client
+    command: npm run dev
+    volumes:
+      - ./client:/client
+    ports:
+      - "3001:3000"
+    
+
+volumes:
+  db_data:
