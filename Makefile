@@ -26,12 +26,19 @@ client:
 bundle_update:
 	docker compose run --rm -u=0:0 api sh -c "bundle config set frozen false && bundle i"
 
+.PHONY: db_create
+db_create:
+	docker compose run --rm -u=0:0 api sh -c "bundle exec rails db:create"
+
+.PHONY: db_migrate
+db_migrate:
+	docker compose run --rm -u=0:0 api sh -c "bundle exec rails db:migrate"
+
 .PHONY: production_deploy
 production_deploy:
 	git fetch origin main
 	git reset --hard origin/main
 	docker compose down
-	docker compose run --rm -u=0:0 api sh -c "bundle config set frozen false && bundle i"
-	docker compose build --no-cache
-	docker compose run --rm -u=0:0 api sh -c "bundle exec rails db:migrate"
+	make bundle_update
+	make db_migrate
 	docker compose up -d
