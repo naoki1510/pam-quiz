@@ -25,3 +25,11 @@ client:
 .PHONY: bundle_update
 bundle_update:
 	docker compose run --rm -u=0:0 server sh -c "bundle config set frozen false && bundle i"
+
+.PHONY: production_deploy
+production_deploy:
+	docker compose -f compose.prod.yaml down
+	docker compose -f compose.prod.yaml run --rm -u=0:0 server sh -c "bundle config set frozen false && bundle i"
+	docker compose -f compose.prod.yaml build --no-cache
+	docker compose -f compose.prod.yaml run --rm -u=0:0 server sh -c "bundle exec rails db:migrate"
+	docker compose -f compose.prod.yaml up -d
