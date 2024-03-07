@@ -12,6 +12,7 @@ export type Question = {
   point: number;
   choices: Choice[];
   until_end?: number;
+  is_finished: boolean;
 };
 
 export const createEmptyQuestion = (): Question => {
@@ -21,6 +22,7 @@ export const createEmptyQuestion = (): Question => {
     question_type: "single",
     point: 1,
     choices: [createEmptyChoice()],
+    is_finished: false,
   };
 };
 
@@ -104,6 +106,18 @@ export const endQuestion = (
   controller?: AbortController
 ) => {
   return fetch(`${host}/questions/${id}/end?${params}`, {
+    method: "GET",
+    headers: getHeaders,
+    signal: controller?.signal,
+  }).then((res) => res.json() as Promise<Question>);
+};
+
+export const resetQuestion = (
+  id: string | number,
+  params?: URLSearchParams,
+  controller?: AbortController
+) => {
+  return fetch(`${host}/questions/${id}/reset?${params}`, {
     method: "GET",
     headers: getHeaders,
     signal: controller?.signal,

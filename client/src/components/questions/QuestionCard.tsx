@@ -12,28 +12,41 @@ import {
   ListItem,
   Text,
 } from "@chakra-ui/react";
-import { Question, endQuestion, startQuestion } from "api/questions";
+import {
+  Question,
+  deleteQuestion,
+  endQuestion,
+  resetQuestion,
+  startQuestion,
+} from "api/questions";
+import locations from "locations";
 import { memo, useCallback } from "react";
 import {
-  IoCaretForward,
-  IoCheckmarkCircle,
-  IoCloseCircleOutline,
+  IoCheckmark,
+  IoClose,
+  IoPencil,
   IoPlayCircle,
+  IoRemove,
   IoStopCircle,
+  IoTrash,
 } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import userIdState from "recoil/userIdState";
 
 export type ShowQuestionProps = {
   question: Question;
   setQuestion?: (question: Question) => void;
   showChoices?: boolean;
-  showStartButton?: boolean;
+  showActions?: boolean;
   href?: string;
 };
 
 export default memo(function QuestionCard(props: ShowQuestionProps) {
-  const { question, setQuestion, href, showChoices, showStartButton } = props;
+  const { question, setQuestion, href, showChoices, showActions } = props;
   const { title, image, point } = question;
+  const userId = useRecoilValue(userIdState);
+  const navigate = useNavigate();
 
   const handleStart = useCallback(() => {
     if (question.id !== undefined)
@@ -46,6 +59,21 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
   const handleEnd = useCallback(() => {
     if (question.id !== undefined)
       endQuestion(
+        question.id,
+        new URLSearchParams({ show_correct: "true" })
+      ).then(setQuestion);
+  }, [question.id]);
+
+  const handleDelete = useCallback(() => {
+    if (question.id !== undefined)
+      deleteQuestion(question.id).then(() => {
+        navigate(locations.listQuestions);
+      });
+  }, [question.id]);
+
+  const handleReset = useCallback(() => {
+    if (question.id !== undefined)
+      resetQuestion(
         question.id,
         new URLSearchParams({ show_correct: "true" })
       ).then(setQuestion);
@@ -70,12 +98,14 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
           <List>
             {question.choices.map((choice) => (
               <ListItem key={choice.id}>
-                {choice.is_correct === undefined ? (
-                  <ListIcon as={IoCaretForward} color={"gray.500"} />
-                ) : choice.is_correct ? (
-                  <ListIcon as={IoCheckmarkCircle} color={"teal.500"} />
+                {choice.is_correct ? (
+                  <ListIcon as={IoCheckmark} color={"teal.500"} />
+                ) : choice.answers.some(
+                    (answer) => answer.user_id === userId
+                  ) ? (
+                  <ListIcon as={IoClose} color={"red.500"} />
                 ) : (
-                  <ListIcon as={IoCloseCircleOutline} color={"red.500"} />
+                  <ListIcon as={IoRemove} color={"gray.500"} />
                 )}
                 {choice.description}
               </ListItem>
@@ -83,8 +113,8 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
           </List>
         )}
       </CardBody>
-      {showStartButton && (
-        <CardFooter gap={4} alignItems={"center"}>
+      {showActions && (
+        <CardFooter gap={2} alignItems={"center"}>
           {question.until_end ? (
             <>
               <Button
@@ -105,8 +135,36 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
               >
                 開始
               </Button>
+              {question.is_finished && (
+                <Button
+                  colorScheme="red"
+                  onClick={handleReset}
+                  leftIcon={<IoClose />}
+                  variant={"outline"}
+                >
+                  リセット
+                </Button>
+              )}
             </>
           )}
+          <Button
+            as={Link}
+            to={locations.updateQuestion.replace(":id", String(question.id))}
+            leftIcon={<IoPencil />}
+            variant={"outline"}
+            colorScheme="blue"
+            ml={"auto"}
+          >
+            編集
+          </Button>
+          <Button
+            onClick={handleDelete}
+            colorScheme="red"
+            leftIcon={<IoTrash />}
+            variant={"outline"}
+          >
+            削除
+          </Button>
         </CardFooter>
       )}
     </Card>

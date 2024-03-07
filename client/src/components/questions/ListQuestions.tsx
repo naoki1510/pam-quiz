@@ -26,11 +26,11 @@ export default memo(function ListQuestions() {
               href={locations.showQuestion.replace(":id", String(question.id))}
               key={question.id}
               showChoices
-              showStartButton
+              showActions
             />
           ))
         ) : (
-          <Text>問題は存在しません。</Text>
+          <Text>問題がありません。</Text>
         )
       ) : (
         <Loading />
