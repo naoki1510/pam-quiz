@@ -1,0 +1,21 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to NAS using SSH
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{secrets.SECRET_KEY}}
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          port: ${{secrets.SSH_PORT}}
+          script: |
+            cd /home/hupass-api/docker/Hupass
+            make production_deploy
