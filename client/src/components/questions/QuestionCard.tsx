@@ -66,17 +66,19 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
 
   const handleDelete = useCallback(() => {
     if (question.id !== undefined)
-      deleteQuestion(question.id).then(() => {
-        navigate(locations.listQuestions);
-      });
+      confirm("問題を削除してよろしいですか？") &&
+        deleteQuestion(question.id).then(() => {
+          navigate(locations.listQuestions);
+        });
   }, [question.id]);
 
   const handleReset = useCallback(() => {
     if (question.id !== undefined)
-      resetQuestion(
-        question.id,
-        new URLSearchParams({ show_correct: "true" })
-      ).then(setQuestion);
+      confirm("回答を削除してよろしいですか？") &&
+        resetQuestion(
+          question.id,
+          new URLSearchParams({ show_correct: "true" })
+        ).then(setQuestion);
   }, [question.id]);
 
   return (
@@ -104,27 +106,32 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
         </HStack>
         {showChoices && (
           <List>
-            {question.choices.map((choice) => (
-              <ListItem
-                key={choice.id}
-                fontWeight={
-                  choice.answers.some((answer) => answer.user_id === userId)
-                    ? "bold"
-                    : "normal"
-                }
-              >
-                {choice.is_correct ? (
-                  <ListIcon as={IoCheckmark} color={"teal.500"} />
-                ) : choice.answers.some(
-                    (answer) => answer.user_id === userId
-                  ) ? (
-                  <ListIcon as={IoClose} color={"red.500"} />
-                ) : (
-                  <ListIcon as={IoRemove} color={"gray.500"} />
-                )}
-                {choice.description}
-              </ListItem>
-            ))}
+            {question.choices.map((choice) => {
+              const isSelected = choice.answers.some(
+                (answer) => answer.user_id === userId
+              );
+              return (
+                <ListItem
+                  key={choice.id}
+                  fontWeight={isSelected ? "bold" : "normal"}
+                >
+                  {choice.is_correct ? (
+                    <ListIcon as={IoCheckmark} color={"teal.500"} />
+                  ) : isSelected ? (
+                    <ListIcon as={IoClose} color={"red.500"} />
+                  ) : (
+                    <ListIcon as={IoRemove} color={"gray.500"} />
+                  )}
+                  {choice.description}{" "}
+                  {choice.is_correct
+                    ? "(正解)"
+                    : isSelected
+                    ? "(あなたの答え)"
+                    : ""}{" "}
+                  {choice.answers.length}人
+                </ListItem>
+              );
+            })}
           </List>
         )}
       </CardBody>
@@ -142,44 +149,43 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
               <Text>あと{Math.round(question.until_end)}秒</Text>
             </>
           ) : (
-            <>
-              <Button
-                onClick={handleStart}
-                leftIcon={<IoPlayCircle />}
-                colorScheme="green"
-              >
-                開始
-              </Button>
-              {question.is_finished && (
-                <Button
-                  colorScheme="red"
-                  onClick={handleReset}
-                  leftIcon={<IoClose />}
-                  variant={"outline"}
-                >
-                  リセット
-                </Button>
-              )}
-            </>
+            <Button
+              onClick={handleStart}
+              leftIcon={<IoPlayCircle />}
+              colorScheme="green"
+            >
+              開始
+            </Button>
           )}
-          <Button
-            as={Link}
-            to={locations.updateQuestion.replace(":id", String(question.id))}
-            leftIcon={<IoPencil />}
-            variant={"outline"}
-            colorScheme="blue"
-            ml={"auto"}
-          >
-            編集
-          </Button>
-          <Button
-            onClick={handleDelete}
-            colorScheme="red"
-            leftIcon={<IoTrash />}
-            variant={"outline"}
-          >
-            削除
-          </Button>
+          <HStack ml={"auto"} gap={4} alignSelf={"end"}>
+            {question.is_finished && (
+              <Button
+                onClick={handleReset}
+                leftIcon={<IoClose />}
+                variant={"link"}
+                colorScheme="red"
+              >
+                回答削除
+              </Button>
+            )}
+            <Button
+              as={Link}
+              to={locations.updateQuestion.replace(":id", String(question.id))}
+              leftIcon={<IoPencil />}
+              variant={"link"}
+              colorScheme="blue"
+            >
+              編集
+            </Button>
+            <Button
+              onClick={handleDelete}
+              leftIcon={<IoTrash />}
+              variant={"link"}
+              colorScheme="red"
+            >
+              削除
+            </Button>
+          </HStack>
         </CardFooter>
       )}
     </Card>
