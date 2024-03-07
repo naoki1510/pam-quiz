@@ -1,9 +1,9 @@
-import { Button, VStack } from "@chakra-ui/react";
+import { Button, Heading, VStack } from "@chakra-ui/react";
 import { createChoice } from "api/choice";
 import { createEmptyQuestion, createQuestion } from "api/questions";
 import locations from "locations";
 import { FormEvent, memo, useCallback, useState } from "react";
-import { IoDocument } from "react-icons/io5";
+import { IoCheckmark } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import QuestionForm from "./QuestionForm";
 
@@ -36,14 +36,15 @@ export default memo(function CreateQuestion() {
       gap={4}
       alignItems={"stretch"}
     >
+      <Heading>問題の作成</Heading>
       <QuestionForm
         question={question}
         onChange={({ question }) => {
           setQuestion(question);
         }}
       />
-      <Button type={"submit"} colorScheme="teal" leftIcon={<IoDocument />}>
-        作成
+      <Button type={"submit"} colorScheme="teal" leftIcon={<IoCheckmark />}>
+        保存
       </Button>
     </VStack>
   );

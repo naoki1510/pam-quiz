@@ -1,12 +1,12 @@
-import { Button, VStack } from "@chakra-ui/react";
+import { Button, Heading, VStack } from "@chakra-ui/react";
 import { createChoice, deleteChoice, updateChoice } from "api/choice";
 import { updateQuestion, useQuestion } from "api/questions";
 import Loading from "components/common/Loading";
+import QuestionForm from "components/questions/QuestionForm";
 import locations from "locations";
 import { FormEvent, memo, useCallback, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import QuestionForm from "components/questions/QuestionForm";
-import { IoDocumentText } from "react-icons/io5";
+import { IoCheckmark, IoClose } from "react-icons/io5";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default memo(function UpdateQuestion() {
   const navigate = useNavigate();
@@ -61,6 +61,7 @@ export default memo(function UpdateQuestion() {
       flex={1}
       gap={4}
     >
+      <Heading>問題の編集</Heading>
       <QuestionForm
         question={question}
         onChange={({ question, deletedChoiceIds }) => {
@@ -68,9 +69,20 @@ export default memo(function UpdateQuestion() {
           setDeletedChoiceIds(deletedChoiceIds);
         }}
       />
-      <Button type={"submit"} colorScheme="teal" leftIcon={<IoDocumentText />}>
-        保存
-      </Button>
+      <VStack alignItems={"stretch"} gap={2}>
+        <Button type={"submit"} colorScheme="teal" leftIcon={<IoCheckmark />}>
+          保存
+        </Button>
+        <Button
+          as={Link}
+          to={locations.showQuestion.replace(":id", String(question.id))}
+          colorScheme="teal"
+          variant={"outline"}
+          leftIcon={<IoClose />}
+        >
+          キャンセル
+        </Button>
+      </VStack>
     </VStack>
   ) : (
     <Loading />

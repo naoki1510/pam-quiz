@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Checkbox,
   Collapse,
@@ -8,11 +9,17 @@ import {
   IconButton,
   Input,
   VStack,
-  useDisclosure,
+  useDisclosure
 } from "@chakra-ui/react";
 import { Choice } from "api/choice";
 import { memo, useCallback, useMemo } from "react";
-import { IoArrowDown, IoArrowUp, IoTrash } from "react-icons/io5";
+import {
+  IoArrowDown,
+  IoArrowUp,
+  IoCaretDown,
+  IoCaretForward,
+  IoTrash,
+} from "react-icons/io5";
 
 export type CreateChoiceProps = {
   onChange?: (value: Choice) => void;
@@ -71,24 +78,22 @@ export default memo(function ChoiceForm(props: CreateChoiceProps) {
         />
       </FormControl>
       <FormControl>
-        <FormLabel>画像</FormLabel>
-        <IconButton
-          aria-label="toggle image"
-          icon={isOpenImage ? <IoArrowUp /> : <IoArrowDown />}
+        <Button
+          leftIcon={isOpenImage ? <IoCaretDown /> : <IoCaretForward />}
           variant={"link"}
-          colorScheme={"teal"}
-          size={"sm"}
           onClick={onToggleImage}
-        />
-      </FormControl>
-      <FormControl>
+        >
+          画像
+        </Button>
         <Collapse in={isOpenImage}>
-          <Input
-            value={image}
-            onChange={handleChangeImage}
-            placeholder={"/images/question-00/choice-00.png"}
-            maxLength={255}
-          />
+          <Box pt={4}>
+            <Input
+              value={image}
+              onChange={handleChangeImage}
+              placeholder={"/images/question-00/choice-00.png"}
+              maxLength={255}
+            />
+          </Box>
         </Collapse>
       </FormControl>
       <Checkbox isChecked={isCorrect} onChange={handleChangeIsCorrect}>

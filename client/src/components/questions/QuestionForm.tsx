@@ -1,20 +1,23 @@
 import {
+  Box,
   Button,
   Card,
   CardBody,
-  Divider,
+  Collapse,
   FormControl,
   FormHelperText,
   FormLabel,
   Input,
+  Select,
   Text,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Choice, createEmptyChoice } from "api/choice";
 import { Question } from "api/questions";
 import ChoiceForm from "components/choices/ChoiceForm";
 import { memo, useCallback, useState } from "react";
-import { IoAdd } from "react-icons/io5";
+import { IoAdd, IoCaretDown, IoCaretForward } from "react-icons/io5";
 
 export type QuestionFormProps = {
   onChange?: (value: {
@@ -27,7 +30,9 @@ export type QuestionFormProps = {
 export default memo(function QuestionForm(props: QuestionFormProps) {
   const { onChange, question } = props;
   const { title, image, choices, point } = question;
+  const [rawPoint, setRawPoint] = useState(String(point));
   const [deletedChoiceIds, setDeletedChoiceIds] = useState<number[]>([]);
+  const { isOpen: isOpenImage, onToggle: onToggleImage } = useDisclosure();
 
   const handleChange = useCallback(
     (question: Question) => {
@@ -46,6 +51,20 @@ export default memo(function QuestionForm(props: QuestionFormProps) {
   const handleChangeImage = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange({ ...question, image: e.target.value });
+    },
+    [question, handleChange]
+  );
+
+  const handleChangeType = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      switch (e.target.value) {
+        case "single":
+          handleChange({ ...question, question_type: "single" });
+          break;
+        case "multiple":
+          handleChange({ ...question, question_type: "multiple" });
+          break;
+      }
     },
     [question, handleChange]
   );
@@ -94,17 +113,14 @@ export default memo(function QuestionForm(props: QuestionFormProps) {
 
   const handleChangePoint = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      setRawPoint(e.target.value);
       handleChange({ ...question, point: Number(e.target.value) });
     },
     [question, handleChange]
   );
 
   return (
-    <VStack
-      gap={{ base: 2, md: 4 }}
-      divider={<Divider />}
-      alignItems={"stretch"}
-    >
+    <VStack gap={4} alignItems={"stretch"}>
       <FormControl>
         <FormLabel>問題</FormLabel>
         <Input
@@ -116,19 +132,36 @@ export default memo(function QuestionForm(props: QuestionFormProps) {
         <FormHelperText>問題を入力してください。（255文字以内）</FormHelperText>
       </FormControl>
       <FormControl>
-        <FormLabel>画像</FormLabel>
-        <Input
-          value={image}
-          onChange={handleChangeImage}
-          placeholder={"/images/question-00.png"}
-          maxLength={255}
-        />
-        <FormHelperText>
-          画像のURLを入力してください。（255文字以内）
-        </FormHelperText>
+        <FormLabel>問題タイプ</FormLabel>
+        <Select value={question.question_type} onChange={handleChangeType}>
+          <option value={"single"}>単一選択</option>
+          <option value={"multiple"}>複数選択</option>
+        </Select>
+      </FormControl>
+      <FormControl>
+        <Button
+          leftIcon={isOpenImage ? <IoCaretDown /> : <IoCaretForward />}
+          variant={"link"}
+          onClick={onToggleImage}
+        >
+          画像
+        </Button>
+        <Collapse in={isOpenImage}>
+          <Box pt={4}>
+            <Input
+              value={image}
+              onChange={handleChangeImage}
+              placeholder={"/images/question-00.png"}
+              maxLength={255}
+            />
+            <FormHelperText>
+              画像のURLを入力してください。（255文字以内）
+            </FormHelperText>
+          </Box>
+        </Collapse>
       </FormControl>
       <VStack alignItems={"stretch"} gap={4}>
-        <Text>選択肢</Text>
+        <Text fontWeight={"medium"}>選択肢</Text>
         {choices.map((choice, index) => (
           <Card key={index} variant={"outline"}>
             <CardBody>
@@ -164,7 +197,7 @@ export default memo(function QuestionForm(props: QuestionFormProps) {
         <Input
           type={"number"}
           placeholder={"1"}
-          value={point}
+          value={rawPoint}
           onChange={handleChangePoint}
         />
       </FormControl>

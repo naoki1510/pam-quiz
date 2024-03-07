@@ -82,7 +82,7 @@ export default memo(function CreateAnswer() {
   }, [navigate]);
 
   return (
-    <VStack alignItems={"stretch"} flex={1} gap={{ base: 2, md: 4 }}>
+    <VStack alignItems={"stretch"} flex={1} gap={4}>
       <Card variant={"outline"}>
         <CardBody>
           <HStack>

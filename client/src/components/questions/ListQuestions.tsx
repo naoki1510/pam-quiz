@@ -1,4 +1,4 @@
-import { Button, Text, VStack } from "@chakra-ui/react";
+import { Button, Heading, Text, VStack } from "@chakra-ui/react";
 import { useQuestions } from "api/questions";
 import Loading from "components/common/Loading";
 import QuestionCard from "components/questions/QuestionCard";
@@ -12,7 +12,8 @@ export default memo(function ListQuestions() {
   );
 
   return (
-    <VStack alignItems={"stretch"} flex={1} gap={{ base: 2, md: 4 }}>
+    <VStack alignItems={"stretch"} flex={1} gap={4}>
+      <Heading>問題一覧</Heading>
       {questions ? (
         questions.length ? (
           questions.map((question) => (
