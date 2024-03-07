@@ -11,7 +11,7 @@ class QuestionsController < ApplicationController
     end
 
     if params[:last].present?
-      @questions = @questions.order(ended_at: :desc).limit(1)
+      @questions = @questions.last_finished
     end
 
     if params[:finished].present?
