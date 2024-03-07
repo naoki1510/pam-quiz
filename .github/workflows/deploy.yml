@@ -17,6 +17,4 @@ jobs:
           username: ${{secrets.SSH_USERNAME}}
           port: ${{secrets.SSH_PORT}}
           script: |
-            ssh 192.168.0.20
-            cd ~/github/pam-quiz
-            make production_deploy
+            ssh 192.168.0.20 "cd ~/github/pam-quiz && make production_deploy"
