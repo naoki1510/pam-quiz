@@ -4,13 +4,13 @@ class User < ApplicationRecord
   has_many :questions, through: :choices
 
   def point
-    answers.joins(:choice).where(choice: {is_correct: true}).count
-  end
-
-  def rank
-    if answers.count == 0 then 
-      return User.count 
+    user_point = 0
+    user_point += answers.joins(:question).where(choice: {is_correct: true}, question: {question_type: :single}).sum("question.point")
+    Question.where(question_type: :multiple).each do |question|
+      if question.answers.where(choices: {is_correct: true}, user_id: id).count == question.choices.where(is_correct: true).count then
+        user_point += question.point
+      end
     end
-    User.joins(:choices).where(choices: {is_correct: true}).group(:id).having("COUNT(*) > ?", point).count.length + 1
+    user_point
   end
 end

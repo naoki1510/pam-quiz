@@ -44,7 +44,7 @@ export type ShowQuestionProps = {
 
 export default memo(function QuestionCard(props: ShowQuestionProps) {
   const { question, setQuestion, href, showChoices, showActions } = props;
-  const { title, image, point } = question;
+  const { title, image, point, question_type } = question;
   const userId = useRecoilValue(userIdState);
   const navigate = useNavigate();
 
@@ -92,12 +92,27 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
         </Heading>
         {image && <Image src={image} alt={title} w={"full"} rounded={"md"} />}
         <HStack>
-          <Badge>{point}点</Badge>
+          <Badge colorScheme={point !== 1 ? "orange" : "gray"}>{point}点</Badge>
+          <Badge colorScheme={question_type !== "single" ? "orange" : "gray"}>
+            {
+              {
+                single: "単一選択",
+                multiple: "複数選択",
+              }[question_type]
+            }
+          </Badge>
         </HStack>
         {showChoices && (
           <List>
             {question.choices.map((choice) => (
-              <ListItem key={choice.id}>
+              <ListItem
+                key={choice.id}
+                fontWeight={
+                  choice.answers.some((answer) => answer.user_id === userId)
+                    ? "bold"
+                    : "normal"
+                }
+              >
                 {choice.is_correct ? (
                   <ListIcon as={IoCheckmark} color={"teal.500"} />
                 ) : choice.answers.some(

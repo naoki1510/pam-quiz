@@ -7,7 +7,7 @@ export type Question = {
   id?: number;
   title: string;
   image: string;
-  question_type: string;
+  question_type: "single" | "multiple";
   display_order?: number;
   point: number;
   choices: Choice[];
