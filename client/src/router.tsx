@@ -1,12 +1,13 @@
-import { createBrowserRouter } from "react-router-dom";
 import App from "App";
+import CreateAnswer from "components/answers/CreateAnswer";
+import Authorize from "components/common/Authorize";
 import CreateQuestion from "components/questions/CreateQuestion";
-import CreateUser from "components/users/CreateUser";
 import ListQuestions from "components/questions/ListQuestions";
-import locations from "locations";
 import ShowQuestion from "components/questions/ShowQuestion";
 import UpdateQuestion from "components/questions/UpdateQuestion";
-import CreateAnswer from "components/answers/CreateAnswer";
+import CreateUser from "components/users/CreateUser";
+import locations from "locations";
+import { createBrowserRouter } from "react-router-dom";
 
 export default createBrowserRouter([
   {
@@ -18,24 +19,30 @@ export default createBrowserRouter([
         element: <CreateUser />,
       },
       {
-        path: locations.listQuestions,
-        element: <ListQuestions />,
-      },
-      {
-        path: locations.showQuestion,
-        element: <ShowQuestion />,
-      },
-      {
-        path: locations.updateQuestion,
-        element: <UpdateQuestion />,
-      },
-      {
-        path: locations.createQuestion,
-        element: <CreateQuestion />,
-      },
-      {
         path: locations.createAnswer,
         element: <CreateAnswer />,
+      },
+      {
+        path: locations.root,
+        element: <Authorize />,
+        children: [
+          {
+            path: locations.listQuestions,
+            element: <ListQuestions />,
+          },
+          {
+            path: locations.showQuestion,
+            element: <ShowQuestion />,
+          },
+          {
+            path: locations.updateQuestion,
+            element: <UpdateQuestion />,
+          },
+          {
+            path: locations.createQuestion,
+            element: <CreateQuestion />,
+          },
+        ],
       },
     ],
   },
