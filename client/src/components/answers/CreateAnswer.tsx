@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Card,
@@ -69,6 +71,7 @@ export default memo(function CreateAnswer() {
     if (questions?.some((question) => question.until_end !== undefined)) return;
     const interval = setInterval(() => {
       fetchQuestions();
+      fetchLastQuestions();
     }, 1000);
 
     return () => {
@@ -106,12 +109,18 @@ export default memo(function CreateAnswer() {
       </Card>
       {questions?.length ? (
         questions.map((question) => (
-          <AnswerForm
-            question={question}
-            key={question.id}
-            selectedChoices={selectedChoices}
-            setSelectedChoices={setSelectedChoices}
-          />
+          <>
+            <AnswerForm
+              question={question}
+              key={question.id}
+              selectedChoices={selectedChoices}
+              setSelectedChoices={setSelectedChoices}
+            />
+            <Alert status="warning" rounded={"md"}>
+              <AlertIcon />
+              回答時間が終わるまでこの画面から移動しないでください。
+            </Alert>
+          </>
         ))
       ) : lastQuestions?.length ? (
         <>
