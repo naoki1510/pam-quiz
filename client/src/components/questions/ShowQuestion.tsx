@@ -1,11 +1,11 @@
-import { deleteQuestion, useQuestion } from "api/questions";
+import { Button, HStack, VStack } from "@chakra-ui/react";
+import { useQuestion } from "api/questions";
 import Loading from "components/common/Loading";
 import locations from "locations";
-import { memo, useCallback } from "react";
+import { memo } from "react";
+import { IoChevronBack } from "react-icons/io5";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import QuestionCard from "./QuestionCard";
-import { Button, HStack, List, VStack } from "@chakra-ui/react";
-import { IoChevronBack, IoPencil, IoTrash } from "react-icons/io5";
 
 export default memo(function ShowQuestion() {
   const navigate = useNavigate();
@@ -16,15 +16,9 @@ export default memo(function ShowQuestion() {
   }
 
   const { question, setQuestion } = useQuestion(
-    Number(id),
+    id,
     new URLSearchParams({ show_correct: "true" })
   );
-
-  const handleDelete = useCallback(() => {
-    deleteQuestion(id).then(() => {
-      navigate(locations.listQuestions);
-    });
-  }, []);
 
   return question ? (
     <VStack alignItems={"stretch"} gap={4}>
@@ -33,7 +27,7 @@ export default memo(function ShowQuestion() {
         setQuestion={setQuestion}
         href={locations.updateQuestion.replace(":id", id)}
         showChoices
-        showStartButton
+        showActions
       />
       <HStack>
         <Button
@@ -44,20 +38,7 @@ export default memo(function ShowQuestion() {
         >
           戻る
         </Button>
-        <Button
-          as={Link}
-          to={locations.updateQuestion.replace(":id", String(question.id))}
-          leftIcon={<IoPencil />}
-          colorScheme="blue"
-          ml={"auto"}
-        >
-          編集
-        </Button>
-        <Button onClick={handleDelete} colorScheme="red" leftIcon={<IoTrash />}>
-          削除
-        </Button>
       </HStack>
-      <List>{}</List>
     </VStack>
   ) : (
     <Loading />

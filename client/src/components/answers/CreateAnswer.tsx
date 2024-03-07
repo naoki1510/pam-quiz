@@ -40,7 +40,7 @@ export default memo(function CreateAnswer() {
   );
   const { questions: lastQuestions, fetchQuestions: fetchLastQuestions } =
     useQuestions(new URLSearchParams({ last: "true", show_correct: "true" }));
-  const { user, fetchUser } = useUser(userId || "");
+  const { user } = useUser(userId || "");
 
   useEffect(() => {
     if (!questions) return;
@@ -104,27 +104,25 @@ export default memo(function CreateAnswer() {
           </HStack>
         </CardBody>
       </Card>
-      {questions ? (
-        questions.length ? (
-          questions.map((question) => (
-            <AnswerForm
-              question={question}
-              key={question.id}
-              selectedChoices={selectedChoices}
-              setSelectedChoices={setSelectedChoices}
-            />
-          ))
-        ) : lastQuestions?.length ? (
-          <>
-            {lastQuestions.map((question) => (
-              <VStack key={question.id} alignItems={"stretch"}>
-                <QuestionCard question={question} showChoices />
-              </VStack>
-            ))}
-          </>
-        ) : (
-          <Text>現在回答を受け付けている問題はありません。</Text>
-        )
+      {questions?.length ? (
+        questions.map((question) => (
+          <AnswerForm
+            question={question}
+            key={question.id}
+            selectedChoices={selectedChoices}
+            setSelectedChoices={setSelectedChoices}
+          />
+        ))
+      ) : lastQuestions?.length ? (
+        <>
+          {lastQuestions.map((question) => (
+            <VStack key={question.id} alignItems={"stretch"}>
+              <QuestionCard question={question} showChoices />
+            </VStack>
+          ))}
+        </>
+      ) : questions && lastQuestions ? (
+        <Text>クイズが開始されるまでお待ちください。</Text>
       ) : (
         <Loading />
       )}

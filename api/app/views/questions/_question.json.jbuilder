@@ -1,4 +1,5 @@
 json.extract! question, :id, :title, :image, :question_type, :point
+json.is_finished question.finished?
 json.choices do
   json.array! question.choices.ordered, partial: "choices/choice", as: :choice
 end

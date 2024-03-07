@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController
-  before_action :set_question, only: %i[ show update destroy start end ]
-  before_action :set_show_correct, only: %i[ index show start end ]
+  before_action :set_question, only: %i[ show update destroy start end reset ]
+  before_action :set_show_correct, only: %i[ index show start end reset ]
 
   # GET /questions
   def index
@@ -49,12 +49,18 @@ class QuestionsController < ApplicationController
   end
 
   def start
+    reset_question
     @question.update!(started_at: Time.current, ended_at: Time.current + 30.seconds)
     render :show
   end
 
   def end
     @question.update!(ended_at: Time.current)
+    render :show
+  end
+
+  def reset
+    reset_question
     render :show
   end
 
@@ -72,5 +78,12 @@ class QuestionsController < ApplicationController
     # Whether to display correct answer
     def set_show_correct
       @is_show_correct = params[:show_correct].present?
+    end
+
+    def reset_question
+      @question.update!(started_at: nil, ended_at: nil)
+      @question.choices.each do |choice|
+        choice.answers.destroy_all
+      end
     end
 end
