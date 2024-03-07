@@ -1,18 +1,18 @@
 .PHONY: up
 up:
-	docker compose up -d
+	docker compose --profile dev up -d
 
 .PHONY: down
 down:
-	docker compose down
+	docker compose --profile dev down
 
 .PHONY: logs
 logs:
-	docker compose logs -f
+	docker compose --profile dev logs -f
 
 .PHONY: build
 build:
-	docker compose build --no-cache
+	docker compose build --profile dev --no-cache
 
 .PHONY: server
 server:
@@ -28,8 +28,8 @@ bundle_update:
 
 .PHONY: production_deploy
 production_deploy:
-	docker compose -f compose.prod.yaml down
-	docker compose -f compose.prod.yaml run --rm -u=0:0 server sh -c "bundle config set frozen false && bundle i"
-	docker compose -f compose.prod.yaml build --no-cache
-	docker compose -f compose.prod.yaml run --rm -u=0:0 server sh -c "bundle exec rails db:migrate"
-	docker compose -f compose.prod.yaml up -d
+	docker compose down
+	docker compose run --rm -u=0:0 server sh -c "bundle config set frozen false && bundle i"
+	docker compose build --no-cache
+	docker compose run --rm -u=0:0 server sh -c "bundle exec rails db:migrate"
+	docker compose up -d

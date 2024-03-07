@@ -1,12 +1,14 @@
 import {
   Button,
   Checkbox,
+  Collapse,
   FormControl,
   FormLabel,
   HStack,
   IconButton,
   Input,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Choice } from "api/choice";
 import { memo, useCallback, useMemo } from "react";
@@ -27,6 +29,7 @@ export default memo(function ChoiceForm(props: CreateChoiceProps) {
   );
   const { onChange, onDelete, onMoveDown, onMoveUp, choice } = props;
   const { description, image, is_correct: isCorrect } = choice;
+  const { isOpen: isOpenImage, onToggle: onToggleImage } = useDisclosure();
 
   const handleChange = useCallback(
     (choice: Choice) => {
@@ -69,12 +72,24 @@ export default memo(function ChoiceForm(props: CreateChoiceProps) {
       </FormControl>
       <FormControl>
         <FormLabel>画像</FormLabel>
-        <Input
-          value={image}
-          onChange={handleChangeImage}
-          placeholder={"/images/question-00/choice-00.png"}
-          maxLength={255}
+        <IconButton
+          aria-label="toggle image"
+          icon={isOpenImage ? <IoArrowUp /> : <IoArrowDown />}
+          variant={"link"}
+          colorScheme={"teal"}
+          size={"sm"}
+          onClick={onToggleImage}
         />
+      </FormControl>
+      <FormControl>
+        <Collapse in={isOpenImage}>
+          <Input
+            value={image}
+            onChange={handleChangeImage}
+            placeholder={"/images/question-00/choice-00.png"}
+            maxLength={255}
+          />
+        </Collapse>
       </FormControl>
       <Checkbox isChecked={isCorrect} onChange={handleChangeIsCorrect}>
         正解

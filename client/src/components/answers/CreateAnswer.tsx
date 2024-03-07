@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   Card,
   CardBody,
@@ -7,7 +6,7 @@ import {
   Heading,
   IconButton,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { createAnswer } from "api/answer";
 import { Choice } from "api/choice";
@@ -55,7 +54,7 @@ export default memo(function CreateAnswer() {
                   user_id: Number(localStorage.getItem("userId")),
                 });
             })
-        ).then(() => fetchUser);
+        ).then(() => fetchUser());
         fetchLastQuestions();
       }
     });
@@ -91,10 +90,6 @@ export default memo(function CreateAnswer() {
                   さん
                 </Text>
               </Heading>
-              <HStack mt={2}>
-                <Badge colorScheme={"teal"}>{user?.rank}位</Badge>
-                <Badge colorScheme={"orange"}>{user?.point}ポイント</Badge>
-              </HStack>
             </Box>
             <IconButton
               aria-label="logout"

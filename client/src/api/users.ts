@@ -6,7 +6,6 @@ export type User = {
   id: number;
   name: string;
   point: number;
-  rank: number;
 };
 
 export const getUsers = (controller?: AbortController) => {
@@ -74,7 +73,7 @@ export const useUser = (id: string | number) => {
   const [error, setError] = useState<Error | null>(null);
 
   const fetchUser = useCallback(
-    (controller: AbortController) => {
+    (controller?: AbortController) => {
       setLoading(true);
       getUser(id, controller)
         .then((user) => {

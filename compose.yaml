@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: dev-db
+    container_name: pam-quiz_db
     image: mysql:8.1
     environment:
       - MYSQL_ROOT_PASSWORD
@@ -8,15 +8,16 @@ services:
       - db_data:/var/lib/mysql
       - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
-      - "3306:3306"
-  server:
-    container_name: dev-server
-    build: ./server
+      - "${DB_PORT}:3306"
+  api:
+    container_name: pam-quiz_api
+    build: ./api
     command: bundle exec rails s -p 3000 -b '0.0.0.0'
     volumes:
-      - ./server:/rails
+      - ./api:/rails
+      - ruby_bundle:/usr/local/bundle
     ports:
-      - "3002:3000"
+      - "${API_PORT}:3000"
     depends_on:
       - db
     environment:
@@ -24,7 +25,7 @@ services:
       - RAILS_ENV
       - MYSQL_ROOT_PASSWORD
   client:
-    container_name: dev-client
+    container_name: pam-quiz_client
     image: node:21
     working_dir: /client
     command: npm run dev
@@ -32,7 +33,10 @@ services:
       - ./client:/client
     ports:
       - "3001:3000"
+    profiles:
+      - dev
     
 
 volumes:
   db_data:
+  ruby_bundle:
