@@ -1,5 +1,6 @@
 import { postHeaders } from "api/headers";
 import host from "api/host";
+import { Answer } from "./answer";
 
 export type Choice = {
   id?: number;
@@ -8,6 +9,7 @@ export type Choice = {
   image: string;
   display_order?: number;
   is_correct?: boolean;
+  answers: Answer[];
 };
 
 export const createEmptyChoice = (questionId?: number): Choice => {
@@ -16,6 +18,7 @@ export const createEmptyChoice = (questionId?: number): Choice => {
     description: "",
     image: "",
     is_correct: false,
+    answers: [],
   };
 };
 

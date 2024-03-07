@@ -1,12 +1,12 @@
 import {
   Box,
+  Button,
   Card,
   CardBody,
   HStack,
   Heading,
-  IconButton,
   Text,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
 import { createAnswer } from "api/answer";
 import { Choice } from "api/choice";
@@ -18,14 +18,17 @@ import locations from "locations";
 import { memo, useCallback, useEffect, useState } from "react";
 import { IoExit } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import userIdState from "recoil/userIdState";
 import AnswerForm from "./AnswerForm";
 
 let previousQuestionIds: number[] = [];
 
 export default memo(function CreateAnswer() {
   const navigate = useNavigate();
+  const [userId, setUserID] = useRecoilState(userIdState);
   useEffect(() => {
-    if (!localStorage.getItem("userId") === null) {
+    if (userId === undefined) {
       navigate(locations.createUser);
     }
   }, [navigate]);
@@ -37,24 +40,24 @@ export default memo(function CreateAnswer() {
   );
   const { questions: lastQuestions, fetchQuestions: fetchLastQuestions } =
     useQuestions(new URLSearchParams({ last: "true", show_correct: "true" }));
-  const { user, fetchUser } = useUser(localStorage.getItem("userId") || "");
+  const { user, fetchUser } = useUser(userId || "");
 
   useEffect(() => {
     if (!questions) return;
 
-    previousQuestionIds.forEach((id) => {
+    previousQuestionIds.map(async (id) => {
       if (questions.every((question) => question.id !== id)) {
-        Promise.all(
+        await Promise.all(
           selectedChoices
             .filter((choice) => choice.question_id === id)
             .map((choice) => {
-              if (choice.id && localStorage.getItem("userId"))
+              if (choice.id && userId)
                 return createAnswer({
                   choice_id: choice.id,
-                  user_id: Number(localStorage.getItem("userId")),
+                  user_id: userId,
                 });
             })
-        ).then(() => fetchUser());
+        );
         fetchLastQuestions();
       }
     });
@@ -74,7 +77,7 @@ export default memo(function CreateAnswer() {
   }, [fetchQuestions, questions]);
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem("userId");
+    setUserID(undefined);
     navigate(locations.createUser);
   }, [navigate]);
 
@@ -91,11 +94,13 @@ export default memo(function CreateAnswer() {
                 </Text>
               </Heading>
             </Box>
-            <IconButton
-              aria-label="logout"
-              icon={<IoExit />}
+            <Button
+              leftIcon={<IoExit />}
               onClick={handleLogout}
-            />
+              colorScheme="red"
+            >
+              ログアウト
+            </Button>
           </HStack>
         </CardBody>
       </Card>
@@ -111,7 +116,6 @@ export default memo(function CreateAnswer() {
           ))
         ) : lastQuestions?.length ? (
           <>
-            <Text>回答済みの問題</Text>
             {lastQuestions.map((question) => (
               <VStack key={question.id} alignItems={"stretch"}>
                 <QuestionCard question={question} showChoices />

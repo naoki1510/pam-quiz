@@ -2,6 +2,7 @@ import { AtomEffect, AtomOptions } from "recoil";
 
 export const storageKeys = {
   password: "password",
+  userId: "userId",
 };
 
 export const getSavedValue = <T>(key: string, defaultValue: T) => {

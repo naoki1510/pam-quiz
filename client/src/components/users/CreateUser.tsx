@@ -13,18 +13,21 @@ import { FormEvent, memo, useCallback, useEffect, useState } from "react";
 import { createUser, useUsers } from "api/users";
 import { useNavigate } from "react-router-dom";
 import locations from "locations";
+import { useRecoilState } from "recoil";
+import userIdState from "recoil/userIdState";
 
 export default memo(function CreateUser() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const { users } = useUsers();
+  const [userId, setUserID] = useRecoilState(userIdState);
 
   const handleCreateUser = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
       createUser({ name })
         .then((user) => {
-          localStorage.setItem("userId", String(user.id));
+          setUserID(user.id);
           navigate(locations.createAnswer);
         })
         .catch(console.error);
@@ -33,7 +36,7 @@ export default memo(function CreateUser() {
   );
 
   useEffect(() => {
-    if (localStorage.getItem("userId")) {
+    if (userId !== undefined) {
       navigate(locations.createAnswer);
     }
   }, [navigate]);
@@ -68,7 +71,7 @@ export default memo(function CreateUser() {
           <Button
             key={user.id}
             onClick={() => {
-              localStorage.setItem("userId", String(user.id));
+              setUserID(user.id);
               navigate(locations.createAnswer);
             }}
             colorScheme="teal"

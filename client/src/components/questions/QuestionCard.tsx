@@ -13,15 +13,19 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Question, endQuestion, startQuestion } from "api/questions";
-import { memo, useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import {
   IoCaretForward,
-  IoCheckmarkCircle,
-  IoCloseCircleOutline,
+  IoCheckmark,
+  IoChevronForward,
+  IoClose,
   IoPlayCircle,
+  IoRemove,
   IoStopCircle,
 } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import userIdState from "recoil/userIdState";
 
 export type ShowQuestionProps = {
   question: Question;
@@ -34,6 +38,7 @@ export type ShowQuestionProps = {
 export default memo(function QuestionCard(props: ShowQuestionProps) {
   const { question, setQuestion, href, showChoices, showStartButton } = props;
   const { title, image, point } = question;
+  const userId = useRecoilValue(userIdState);
 
   const handleStart = useCallback(() => {
     if (question.id !== undefined)
@@ -70,12 +75,14 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
           <List>
             {question.choices.map((choice) => (
               <ListItem key={choice.id}>
-                {choice.is_correct === undefined ? (
-                  <ListIcon as={IoCaretForward} color={"gray.500"} />
-                ) : choice.is_correct ? (
-                  <ListIcon as={IoCheckmarkCircle} color={"teal.500"} />
+                {choice.is_correct ? (
+                  <ListIcon as={IoCheckmark} color={"teal.500"} />
+                ) : choice.answers.some(
+                    (answer) => answer.user_id === userId
+                  ) ? (
+                  <ListIcon as={IoClose} color={"red.500"} />
                 ) : (
-                  <ListIcon as={IoCloseCircleOutline} color={"red.500"} />
+                  <ListIcon as={IoRemove} color={"gray.500"} />
                 )}
                 {choice.description}
               </ListItem>

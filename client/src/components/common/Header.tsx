@@ -9,6 +9,7 @@ import { useAuthorize } from "./Authorize";
 type MenuData = {
   label: string;
   href: string;
+  admin?: boolean;
 };
 
 const menus: MenuData[] = [
@@ -17,12 +18,19 @@ const menus: MenuData[] = [
     href: locations.createUser,
   },
   {
+    label: "Admin",
+    href: locations.listQuestions,
+    admin: false,
+  },
+  {
     label: "Questions",
     href: locations.listQuestions,
+    admin: true,
   },
   {
     label: "Users",
     href: locations.listQuestions,
+    admin: true,
   },
 ];
 
@@ -42,11 +50,15 @@ export default memo(function Header() {
         Quiz
       </Heading>
       <HStack divider={<Box w={"1px"} />} alignItems={"stretch"}>
-        {menus.map((menu) => (
-          <Button variant={"link"} key={menu.label} as={Link} to={menu.href}>
-            {menu.label}
-          </Button>
-        ))}
+        {menus
+          .filter(
+            (menu) => menu.admin === undefined || menu.admin === authorized
+          )
+          .map((menu) => (
+            <Button variant={"link"} key={menu.label} as={Link} to={menu.href}>
+              {menu.label}
+            </Button>
+          ))}
         {authorized && (
           <Button variant={"link"} onClick={handleLogout}>
             Exit

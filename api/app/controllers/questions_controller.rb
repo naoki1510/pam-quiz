@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController
   before_action :set_question, only: %i[ show update destroy start end ]
-  before_action :set_show_correct, :set_show_answers, only: %i[ index show start end ]
+  before_action :set_show_correct, only: %i[ index show start end ]
 
   # GET /questions
   def index
@@ -72,10 +72,5 @@ class QuestionsController < ApplicationController
     # Whether to display correct answer
     def set_show_correct
       @is_show_correct = params[:show_correct].present?
-    end
-
-    # Whether to display answers
-    def set_show_answers
-      @is_show_answers = params[:show_answers].present?
     end
 end
