@@ -28,7 +28,7 @@ bundle_update:
 
 .PHONY: production_deploy
 production_deploy:
-  git pull -f
+	git pull -f
 	docker compose down
 	docker compose run --rm -u=0:0 server sh -c "bundle config set frozen false && bundle i"
 	docker compose build --no-cache
