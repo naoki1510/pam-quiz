@@ -13,6 +13,7 @@ export type Question = {
   choices: Choice[];
   until_end?: number;
   is_finished: boolean;
+  status?: "active" | "finished" | "answer_opened" | "waiting";
 };
 
 export const createEmptyQuestion = (): Question => {
@@ -118,6 +119,18 @@ export const resetQuestion = (
   controller?: AbortController
 ) => {
   return fetch(`${host}/questions/${id}/reset?${params}`, {
+    method: "GET",
+    headers: getHeaders,
+    signal: controller?.signal,
+  }).then((res) => res.json() as Promise<Question>);
+};
+
+export const openAnswer = (
+  id: string | number,
+  params?: URLSearchParams,
+  controller?: AbortController
+) => {
+  return fetch(`${host}/questions/${id}/open_answer?${params}`, {
     method: "GET",
     headers: getHeaders,
     signal: controller?.signal,

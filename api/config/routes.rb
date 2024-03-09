@@ -15,4 +15,5 @@ Rails.application.routes.draw do
   get "questions/:id/start" => "questions#start"
   get "questions/:id/end" => "questions#end"
   get "questions/:id/reset" => "questions#reset"
+  get "questions/:id/open_answer" => "questions#open_answer"
 end

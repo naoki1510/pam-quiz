@@ -5,6 +5,8 @@ export type Answer = {
   id?: number;
   user_id: number;
   choice_id: number;
+  username?: string;
+  choice?: string;
 };
 
 export type CreateAnswerParams = {

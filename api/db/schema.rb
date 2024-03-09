@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_03_102618) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_09_022235) do
   create_table "answers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "choice_id", null: false
@@ -42,6 +42,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_03_102618) do
     t.timestamp "ended_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.timestamp "open_answer_at"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
