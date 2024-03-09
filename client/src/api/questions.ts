@@ -8,7 +8,7 @@ export type Question = {
   title: string;
   image: string;
   question_type: "single" | "multiple";
-  display_order?: number;
+  display_order: number | null;
   point: number;
   choices: Choice[];
   until_end?: number;
@@ -21,6 +21,7 @@ export const createEmptyQuestion = (): Question => {
     title: "",
     image: "",
     question_type: "single",
+    display_order: null,
     point: 1,
     choices: [createEmptyChoice()],
     is_finished: false,
