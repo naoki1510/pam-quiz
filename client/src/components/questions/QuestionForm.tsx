@@ -49,7 +49,7 @@ export default memo(function QuestionForm(props: QuestionFormProps) {
       setRawDisplayOrder(e.target.value);
       handleChange({
         ...question,
-        display_order: Number(e.target.value) || null,
+        display_order: e.target.value === "" ? null : Number(e.target.value),
       });
     },
     [question, handleChange]
