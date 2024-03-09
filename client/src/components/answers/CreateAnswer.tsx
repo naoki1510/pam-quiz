@@ -18,7 +18,7 @@ import Loading from "components/common/Loading";
 import QuestionCard from "components/questions/QuestionCard";
 import locations from "locations";
 import { memo, useCallback, useEffect, useState } from "react";
-import { IoExit } from "react-icons/io5";
+import { IoExitOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import userIdState from "recoil/userIdState";
@@ -99,9 +99,10 @@ export default memo(function CreateAnswer() {
               </Heading>
             </Box>
             <Button
-              leftIcon={<IoExit />}
+              leftIcon={<IoExitOutline />}
               onClick={handleLogout}
               colorScheme="red"
+              variant={"link"}
             >
               ログアウト
             </Button>
