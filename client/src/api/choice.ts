@@ -5,6 +5,7 @@ import { Answer } from "./answer";
 export type Choice = {
   id?: number;
   question_id?: number;
+  title: string;
   description: string;
   image: string;
   display_order?: number;
@@ -15,6 +16,7 @@ export type Choice = {
 export const createEmptyChoice = (questionId?: number): Choice => {
   return {
     question_id: questionId,
+    title: "",
     description: "",
     image: "",
     is_correct: false,

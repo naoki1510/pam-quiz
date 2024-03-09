@@ -6,8 +6,8 @@ class User < ApplicationRecord
   def point
     user_point = 0
     user_point += answers.joins(:question).where(choice: {is_correct: true}, question: {question_type: :single}).sum("question.point")
-    Question.where(question_type: :multiple).each do |question|
-      if question.answers.where(choices: {is_correct: true}, user_id: id).count == question.choices.where(is_correct: true).count then
+    questions.where(question_type: :multiple).each do |question|
+      if question.answers.where(choices: {is_correct: true}, user_id: id).count == question.choices.where(is_correct: true).count && question.answers.where(user_id: id).count == question.choices.where(is_correct: true).count
         user_point += question.point
       end
     end

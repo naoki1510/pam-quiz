@@ -6,6 +6,7 @@ import ListQuestions from "components/questions/ListQuestions";
 import ShowQuestion from "components/questions/ShowQuestion";
 import UpdateQuestion from "components/questions/UpdateQuestion";
 import CreateUser from "components/users/CreateUser";
+import ListUsers from "components/users/ListUsers";
 import locations from "locations";
 import { createBrowserRouter } from "react-router-dom";
 
@@ -41,6 +42,10 @@ export default createBrowserRouter([
           {
             path: locations.createQuestion,
             element: <CreateQuestion />,
+          },
+          {
+            path: locations.listUsers,
+            element: <ListUsers />,
           },
         ],
       },

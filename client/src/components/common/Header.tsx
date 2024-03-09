@@ -29,7 +29,7 @@ const menus: MenuData[] = [
   },
   {
     label: "Users",
-    href: locations.listQuestions,
+    href: locations.listUsers,
     admin: true,
   },
 ];
