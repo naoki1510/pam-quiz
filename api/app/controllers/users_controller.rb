@@ -3,7 +3,7 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    @users = User.all.preload(answers: [:choice])
+    @users = User.all.includes(:questions)
   end
 
   # GET /users/1
