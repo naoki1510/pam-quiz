@@ -3,6 +3,8 @@ class Question < ApplicationRecord
   has_many :answers, through: :choices
   has_many :users, through: :answers
 
+  before_save :set_display_order
+
   scope :ordered, -> { order(display_order: :asc) }
   scope :active, -> { where("started_at <= ? AND ? < ended_at", Time.current, Time.current) }
   scope :finished, -> { where("ended_at <= ?", Time.current).order(ended_at: :desc)}
@@ -34,5 +36,10 @@ class Question < ApplicationRecord
     return :active if active?
     :waiting
   end
+
+  private
+    def set_display_order
+      self.display_order ||= Question.maximum(:display_order).to_i + 1
+    end
 
 end

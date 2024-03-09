@@ -31,6 +31,9 @@ export default memo(function QuestionForm(props: QuestionFormProps) {
   const { onChange, question } = props;
   const { title, image, choices, point } = question;
   const [rawPoint, setRawPoint] = useState(String(point));
+  const [rawDisplayOrder, setRawDisplayOrder] = useState(
+    String(question.display_order ?? "")
+  );
   const [deletedChoiceIds, setDeletedChoiceIds] = useState<number[]>([]);
   const { isOpen: isOpenImage, onToggle: onToggleImage } = useDisclosure();
 
@@ -39,6 +42,17 @@ export default memo(function QuestionForm(props: QuestionFormProps) {
       onChange?.({ question, deletedChoiceIds });
     },
     [onChange]
+  );
+
+  const handleChangeOrder = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setRawDisplayOrder(e.target.value);
+      handleChange({
+        ...question,
+        display_order: Number(e.target.value) || null,
+      });
+    },
+    [question, handleChange]
   );
 
   const handleChangeTitle = useCallback(
@@ -121,6 +135,15 @@ export default memo(function QuestionForm(props: QuestionFormProps) {
 
   return (
     <VStack gap={4} alignItems={"stretch"}>
+      <FormControl>
+        <FormLabel>問題番号</FormLabel>
+        <Input
+          type={"number"}
+          value={rawDisplayOrder}
+          onChange={handleChangeOrder}
+          placeholder={"未入力の場合、末尾になります。"}
+        />
+      </FormControl>
       <FormControl>
         <FormLabel>問題</FormLabel>
         <Input

@@ -47,7 +47,7 @@ export type ShowQuestionProps = {
 
 export default memo(function QuestionCard(props: ShowQuestionProps) {
   const { question, setQuestion, href, showChoices, showActions } = props;
-  const { title, image, point, question_type } = question;
+  const { display_order, title, image, point, question_type } = question;
   const userId = useRecoilValue(userIdState);
   const navigate = useNavigate();
 
@@ -101,7 +101,7 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
         gap={4}
       >
         <Heading size={"md"} variant={"h2"}>
-          {title}
+          第{display_order}問 {title}
         </Heading>
         {image && <Image src={image} alt={title} w={"full"} rounded={"md"} />}
         <HStack>
