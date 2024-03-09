@@ -16,6 +16,7 @@ import {
   Question,
   deleteQuestion,
   endQuestion,
+  openAnswer,
   resetQuestion,
   startQuestion,
 } from "api/questions";
@@ -24,8 +25,10 @@ import { memo, useCallback } from "react";
 import {
   IoCheckmark,
   IoClose,
+  IoDocumentText,
   IoPencil,
   IoPlayCircle,
+  IoRefresh,
   IoRemove,
   IoStopCircle,
   IoTrash,
@@ -81,6 +84,14 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
         ).then(setQuestion);
   }, [question.id]);
 
+  const handleOpenAnswer = useCallback(() => {
+    if (question.id !== undefined)
+      openAnswer(
+        question.id,
+        new URLSearchParams({ show_correct: "true" })
+      ).then(setQuestion);
+  }, [question.id]);
+
   return (
     <Card>
       <CardBody
@@ -117,18 +128,13 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
                 >
                   {choice.is_correct ? (
                     <ListIcon as={IoCheckmark} color={"teal.500"} />
-                  ) : isSelected ? (
+                  ) : isSelected && question.status === "answer_opened" ? (
                     <ListIcon as={IoClose} color={"red.500"} />
                   ) : (
                     <ListIcon as={IoRemove} color={"gray.500"} />
                   )}
-                  {choice.description}{" "}
-                  {choice.is_correct
-                    ? "(正解)"
-                    : isSelected
-                    ? "(あなたの答え)"
-                    : ""}{" "}
-                  {choice.answers.length}人
+                  {choice.description} {choice.is_correct && "(正解)"}{" "}
+                  {isSelected && "(あなたの答え)"} {choice.answers.length}人
                 </ListItem>
               );
             })}
@@ -137,7 +143,7 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
       </CardBody>
       {showActions && (
         <CardFooter gap={2} alignItems={"center"}>
-          {question.until_end ? (
+          {question.status === "active" ? (
             <>
               <Button
                 onClick={handleEnd}
@@ -146,8 +152,24 @@ export default memo(function QuestionCard(props: ShowQuestionProps) {
               >
                 終了
               </Button>
-              <Text>あと{Math.round(question.until_end)}秒</Text>
+              <Text>あと{Math.round(question.until_end ?? 0)}秒</Text>
             </>
+          ) : question.status === "finished" ? (
+            <Button
+              onClick={handleOpenAnswer}
+              leftIcon={<IoDocumentText />}
+              colorScheme="yellow"
+            >
+              解答
+            </Button>
+          ) : question.status === "answer_opened" ? (
+            <Button
+              onClick={handleStart}
+              leftIcon={<IoRefresh />}
+              colorScheme="red"
+            >
+              やり直し
+            </Button>
           ) : (
             <Button
               onClick={handleStart}

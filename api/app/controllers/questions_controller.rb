@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController
-  before_action :set_question, only: %i[ show update destroy start end reset ]
-  before_action :set_show_correct, only: %i[ index show start end reset ]
+  before_action :set_question, only: %i[ show update destroy start end reset open_answer ]
+  before_action :set_show_correct, only: %i[ index show start end reset open_answer ]
 
   # GET /questions
   def index
@@ -64,6 +64,11 @@ class QuestionsController < ApplicationController
     render :show
   end
 
+  def open_answer
+    @question.update!(open_answer_at: Time.current)
+    render :show
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_question
@@ -81,9 +86,7 @@ class QuestionsController < ApplicationController
     end
 
     def reset_question
-      @question.update!(started_at: nil, ended_at: nil)
-      @question.choices.each do |choice|
-        choice.answers.destroy_all
-      end
+      @question.update!(started_at: nil, ended_at: nil, open_answer_at: nil)
+      Answer.joins(:question).where(questions: {id: @question.id}).destroy_all
     end
 end

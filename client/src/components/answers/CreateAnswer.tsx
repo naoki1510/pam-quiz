@@ -41,7 +41,7 @@ export default memo(function CreateAnswer() {
     new URLSearchParams({ active: "true" })
   );
   const { questions: lastQuestions, fetchQuestions: fetchLastQuestions } =
-    useQuestions(new URLSearchParams({ last: "true", show_correct: "true" }));
+    useQuestions(new URLSearchParams({ last: "true" }));
   const { user } = useUser(userId || "");
 
   useEffect(() => {
@@ -60,6 +60,7 @@ export default memo(function CreateAnswer() {
                 });
             })
         );
+        setSelectedChoices([]);
         fetchLastQuestions();
       }
     });

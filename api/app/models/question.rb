@@ -12,8 +12,27 @@ class Question < ApplicationRecord
     answers.where(choice_id: correct_choices.ids)
   end
 
+  def active?
+    started_at.present? && ended_at.present? && started_at <= Time.current && Time.current < ended_at
+  end
+
   def finished?
     ended_at.present? && ended_at <= Time.current
+  end
+
+  def until_end
+    (ended_at - Time.current) if (started_at.present? && ended_at.present? && started_at < Time.current && Time.current < ended_at)
+  end
+
+  def answer_opened?
+    open_answer_at.present? && open_answer_at <= Time.current
+  end
+
+  def status
+    return :answer_opened if answer_opened?
+    return :finished if finished?
+    return :active if active?
+    :waiting
   end
 
 end
