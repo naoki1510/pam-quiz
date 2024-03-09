@@ -38,6 +38,15 @@ export default memo(function ShowQuestion() {
         >
           戻る
         </Button>
+        <Button
+          as={Link}
+          to={locations.createQuestion}
+          colorScheme="teal"
+          ml={"auto"}
+          variant={"outline"}
+        >
+          問題を追加
+        </Button>
       </HStack>
     </VStack>
   ) : (

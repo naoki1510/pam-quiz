@@ -40,6 +40,9 @@ class Question < ApplicationRecord
   private
     def set_display_order
       self.display_order ||= Question.maximum(:display_order).to_i + 1
+      if Question.where(display_order: self.display_order).where.not(id: self.id).exists?
+        Question.where(display_order: self.display_order).where.not(id: self.id).update_all("display_order = display_order + 1")
+      end
     end
 
 end
