@@ -4,6 +4,7 @@ class Question < ApplicationRecord
   has_many :users, through: :answers
 
   before_save :set_display_order
+  after_destroy :reduce_display_order
 
   scope :ordered, -> { order(display_order: :asc) }
   scope :active, -> { where("started_at <= ? AND ? < ended_at", Time.current, Time.current) }
@@ -43,6 +44,10 @@ class Question < ApplicationRecord
       if Question.where(display_order: self.display_order).where.not(id: self.id).exists?
         Question.where(display_order: self.display_order).where.not(id: self.id).update_all("display_order = display_order + 1")
       end
+    end
+
+    def reduce_display_order
+      Question.where("display_order > ?", self.display_order).update_all("display_order = display_order - 1")
     end
 
 end
