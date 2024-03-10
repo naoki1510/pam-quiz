@@ -34,7 +34,7 @@ export default memo(function ListUsers() {
 
     //createObjectURLで作成したオブジェクトURLを開放する
     URL.revokeObjectURL(link.href);
-  }, []);
+  }, [users]);
 
   return (
     <VStack align={"stretch"} flex={1} gap={4}>
