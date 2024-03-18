@@ -9,7 +9,7 @@ import {
   IconButton,
   Input,
   VStack,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Choice } from "api/choice";
 import { memo, useCallback, useMemo } from "react";

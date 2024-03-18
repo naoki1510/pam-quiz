@@ -12,7 +12,7 @@ logs:
 
 .PHONY: build
 build:
-	docker compose build --profile dev --no-cache
+	docker compose --profile dev build --no-cache
 
 .PHONY: api
 api:
